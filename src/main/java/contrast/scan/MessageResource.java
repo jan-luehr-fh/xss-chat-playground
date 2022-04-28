@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Path("/messages")
-public class MessageRessource {
+public class MessageResource {
 
     public static final List<String> msgs = new ArrayList<>();
 
