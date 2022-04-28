@@ -21,7 +21,7 @@ public class MessageResource {
     @Path("/{room}")
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response messages(String room, @Context EntityManager em2) {
+    public ChatMessage messages(String room, @Context EntityManager em2) {
         TypedQuery<String> query = em2.createQuery("select me.content from MessageEntity me",String.class);
         List<String> msgs = query.getResultList(); // source, tagged db-source
         ChatMessage result = new ChatMessage();
@@ -31,7 +31,7 @@ public class MessageResource {
         } else {
             result.msgs += "<i>No messages</i>";
         }
-        return Response.ok(result).build();
+        return result;
     }
 
 
@@ -44,13 +44,11 @@ public class MessageResource {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
     @Transactional
-    public Response post(String msg, @Context EntityManager em) {
+    public void post(String msg, @Context EntityManager em) {
         var stmt = Instant.now().toString();
         MessageEntity m = new MessageEntity();
         m.setContent(stmt + " - " + msg);
         em.persist(m);
-        return Response.noContent().build();
-
     }
 
 }
