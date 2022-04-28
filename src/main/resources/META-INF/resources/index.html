@@ -58,6 +58,9 @@
 
     <div>
         <h2>Messages in Chat</h2>
+        <p>
+            Welcome to room <span id="roomName"></span>
+        </p>
         <div id="chatMessages">
             <i>No Messages sent</i>
         </div>
@@ -68,9 +71,20 @@
             <input type="text" class="form-control" id="message" placeholder="Hello World"> <br />
             <button type="button" onclick="send_msg()" class="btn btn-primary">Submit</button>
         </form>
+        <p id="helpText"></p>
+
         <p></p>
-        Note, when server-side encoding is not performed you can demo XSS by sending:
-        <pre> &lt;img src='invalid' onError='alert("XSS-Attack!")'&gt;</pre>
+        Note, when server-side encoding is not performed you can demo stored-XSS by sending:
+        <pre> &lt;img src='invalid' onError='alert("Stored-XSS-Attack!")'&gt;</pre>
+
+        <p>
+            Note, for the reflected XSS, an attacker could send a link like this via E-Mail
+            <a href="http://localhost:8080/?room=%3Cimg%20src=%27invalid%27%20onError=%27alert(%22Reflected-XSS-Attack!%22)%27%3E">
+                http://localhost:8080/?room=%3Cimg%20src=%27invalid%27%20onError=%27alert(%22Reflected-XSS-Attack!%22)%27%3E
+            </a>
+
+        </p>
+
     </div>
 
 </div>

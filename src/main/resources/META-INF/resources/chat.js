@@ -5,12 +5,15 @@
 var room_name = location.href // Source, but is there actually a way to decode a room-name with propagators?
  */
 
-var room_name = "lounge";
+const url = new URL(location.href);
+const room_name = url.searchParams.get("room");
+
+//var room_name = "lounge";
 
 function send_msg() {
     let inputBox = document.getElementById("message").value;
     let send_request = new XMLHttpRequest();
-    send_request.open('POST', 'messages/' + room_name, false);
+    send_request.open('POST', 'messages', false);
     send_request.send(inputBox);
 }
 
@@ -21,28 +24,28 @@ let request = new XMLHttpRequest();
 request.open('GET', 'messages/' + room_name , false);
 request.send(null);
 
+// Initial-load
+let response = request.responseText // Note: When using a sanitizing backend, this is tagged html-escaped
+let returned_data = JSON.parse(response);
+let sink_messages = document.getElementById('chatMessages')
+let sink_room = document.getElementById('roomName')
+let sink_help = document.getElementById('helpText')
+sink_room.innerHTML = returned_data.room // Reflected XSS - An attacker controls the room-name
+sink_messages.innerHTML = returned_data.msgs // Stored XSS: An attack can send evil messages
+sink_help.innerHTML = returned_data.help // No taint flow, help_text is always static at the server
 
-
-
-
-// Propagation on JSON.parse .... or sth
-let source = request.responseText // Note: When using a sanitizing backend, this is tagged html-escaped
-let sink = document.getElementById('chatMessages')
-let sink2 = document.getElementById('rootTitle')
-let sink3 = document.getElementById('helpText')
-sink.innerHTML = source.room_name
-sink2.innerHTML = source.messages
-sink3.innerHTML = source.help_text // We not it's save!
-
-// Go on loading messages
+//Go on loading messages
 setInterval(() => {
-    // Load messages initially
     let request = new XMLHttpRequest();
-    request.open('GET', 'messages/' + room_name, false);
+    request.open('GET', 'messages/' + room_name , false);
     request.send(null);
+    let response = request.responseText // Note: When using a sanitizing backend, this is tagged html-escaped
+    let returned_data = JSON.parse(response);
+    let sink_messages = document.getElementById('chatMessages')
+    let sink_room = document.getElementById('roomName')
+    let sink_help = document.getElementById('helpText')
+    sink_room.innerHTML = returned_data.room // Reflected XSS
+    sink_messages.innerHTML = returned_data.msgs // Stored XSS: An attack controls the room-name
+    sink_help.innerHTML = returned_data.help // No taint flow, help_text is always static at the server
 
-    let source = request.responseText
-    let sink = document.getElementById('chatMessages')
-    sink.innerHTML = source
-
-},1000)
+},2000)
