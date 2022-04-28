@@ -14,6 +14,9 @@ import java.util.List;
 @Path("/logs")
 public class LogResources {
 
+    // Idea for a server-side taint (stored XSS)
+    // Same idea as for chat - but maybe: More convincing story for server-side
+
     @GET
     @Produces(MediaType.TEXT_HTML)
     public String messages() {
@@ -23,6 +26,7 @@ public class LogResources {
 
     public List<String> logMessages() {
         try {
+            // TODO actually create a log-file withXSS-content
             var handle = this.getClass().getClassLoader().getResource("apache_access.log"); // A source for this?
             assert handle != null;
             return Files.readAllLines(Paths.get(handle.toURI()));
